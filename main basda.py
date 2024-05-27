@@ -120,7 +120,7 @@ def input_data_petugas():
     os.system("cls")
     global petugas_baru, nama_petugas, telp_petugas, honorarium_petugas, jenis_petugas
     print("Tambah data petugas pernikahan".center(115))
-    nama_petugas = input("Nama Lengkap Petugas  : ")
+    nama_petugas = input("Nama Petugas  : ")
     telp_petugas = input("Nomor Telepon Petugas : ")
     while (len(telp_petugas) > 12) or (telp_petugas.isdigit() == False):
         os.system("cls")
@@ -155,16 +155,20 @@ def tambah_petugasbaru():
 def hapus_data_petugas():
     os.system("cls")
     print("Pilih data petugas yang ingin dihapus\n".center(115))
-    for petugas in petugasnikah.readpetugas():
-        print(f"{petugas[0]}. Nama Lengkap Petugas  : {petugas[1]}\n   Nomor Telepon Petugas : {petugas[2]}\n   Honorarium Petugas    : {petugas[3]}\n   Jenis Petugas         : {petugas[4]}\n")
+    data = petugasnikah.readpetugas()
+    nomor = 1
+    for petugas in data:
+        print(f"{nomor}. Nama Lengkap Petugas  : {petugas[1]}\n   Nomor Telepon Petugas : {petugas[2]}\n   Honorarium Petugas    : {petugas[3]}\n   Jenis Petugas         : {petugas[4]}\n")
+        nomor += 1
     data_dihapus = input("Pilih Petugas (Ketik nomornya) : ")
-    while data_dihapus.isdigit() == False:
+    while data_dihapus.isdigit() == False or int(data_dihapus) > len(data):
         os.system("cls")
         print("Maaf, inputan harus berupa angka. Klik enter untuk lanjut =>".center(115))
         hapus_data_petugas()
-    hapus = {'id' : int(data_dihapus)}
+    id_dihapus = data[int(data_dihapus)-1][0]
+    hapus = {'id' : id_dihapus}
     petugasnikah.deletepetugas(hapus)
-    input("Penambahan data petugas pernikahan berhasil\nKlik enter untuk lanjut => ".center(115))
+    input("Penghapusan data petugas pernikahan berhasil\nKlik enter untuk lanjut => ".center(115))
     close()
 
 def menu_edit_petugas():
@@ -257,14 +261,13 @@ def menucust():
         menucust()
 
 def reservasi():
+    admin_bertugas()
+    pemesan()
     data_pengantin()
     data_paket()
     data_waktu()
     data_petugas()
     jumlah_undangan()
-    admin_bertugas()
-    pemesan()
-    catatan_pengantin()
 
 def data_pengantin():
     os.system("cls")
@@ -336,13 +339,14 @@ def data_waktu():
 
 def data_petugas():
     os.system("cls")
-    print("Pilih petugas pernikahanmu 🤗".center(115))
+    print("Pilih petugas pernikahan".center(115))
     print("-Petugas MC -".center(115))
     nomor = 1
     list_mc = petugasnikah.petugasmc()
     list_hadrah = petugasnikah.petugashadrah()
     list_mubaligh = petugasnikah.petugasmubaligh()
     list_qori = petugasnikah.petugasqori()
+    global mc_akad, hadrah_akad, mubaligh_akad, qori_akad, id_mc, id_hadrah, id_mubaligh, id_qori
     for mc in list_mc:
         print(f"{nomor}. {mc[1]}")
         nomor += 1
@@ -350,7 +354,8 @@ def data_petugas():
     while pilih_mc.isdigit == False or int(pilih_mc) > len(list_mc):
         input("Maaf, inputan harus berupa angka. Pilih salah satu petugas\nKlik enter untuk lanjut => ")
         data_petugas()
-    global mc_akad, hadrah_akad, mubaligh_akad, qori_akad
+    data_mc = {'jenis_petugas':"MC", 'id_sekarang': int(pilih_mc)}
+    id_mc = petugasnikah.panggilidpetugas(data_mc)
     mc_akad = list_mc[int(pilih_mc) - 1][1]
     os.system("cls")
     print("Pilih petugas pernikahanmu 🤗".center(115))
@@ -363,6 +368,8 @@ def data_petugas():
     while pilih_hadrah.isdigit == False or int(pilih_hadrah) > len(list_hadrah):
         input("Maaf, inputan harus berupa angka. Pilih salah satu petugas\nKlik enter untuk lanjut => ")
         data_petugas()
+    data_hadrah = {'jenis_petugas':"Tim Hadrah", 'id_sekarang': int(pilih_hadrah)}
+    id_hadrah = petugasnikah.panggilidpetugas(data_hadrah)
     hadrah_akad = list_hadrah[int(pilih_hadrah) - 1][1]
     os.system("cls")
     print("Pilih petugas pernikahanmu 🤗".center(115))
@@ -375,6 +382,8 @@ def data_petugas():
     while pilih_mubaligh.isdigit == False or int(pilih_mubaligh) > len(list_mubaligh):
         input("Maaf, inputan harus berupa angka. Pilih salah satu petugas\nKlik enter untuk lanjut => ")
         data_petugas()
+    data_mubaligh = {'jenis_petugas':"Mubaligh", 'id_sekarang': int(pilih_mubaligh)}
+    id_mubaligh = petugasnikah.panggilidpetugas(data_mubaligh)
     mubaligh_akad = list_mubaligh[int(pilih_mubaligh) - 1][1]
     os.system("cls")
     print("Pilih petugas pernikahanmu 🤗".center(115))
@@ -387,6 +396,8 @@ def data_petugas():
     while pilih_qori.isdigit == False or int(pilih_qori) > len(list_qori):
         input("Maaf, inputan harus berupa angka. Pilih salah satu petugas\nKlik enter untuk lanjut => ")
         data_petugas()
+    data_qori = {'jenis_petugas':"Qori", 'id_sekarang': int(pilih_qori)}
+    id_qori = petugasnikah.panggilidpetugas(data_qori)
     qori_akad = list_qori[int(pilih_qori) - 1][1]
 
 def pemesan():
@@ -436,7 +447,16 @@ def tambahkanreservasi():
     transaksi.tambahreservasi(data_reservasi)
     print("Selamat! Reservasi berhasil dilakukan 🙌".center(115))
     input("Klik enter untuk melanjutkan => ")
+    tambahpetugas()
     close()
+
+def tambahpetugas():
+    reservasi = transaksi.bacareservasi()
+    last_reservasi = reservasi[-1][0]
+    id_petugas = [id_mc, id_hadrah, id_mubaligh, id_qori]
+    for petugas in id_petugas:
+        detail_petugas = {'id_reservasi': last_reservasi, 'id_petugas':petugas}
+        petugasnikah.tambahkedetail(detail_petugas)
 
 def jumlah_undangan():
     os.system("cls")
@@ -478,27 +498,15 @@ def konfirmasi_reservasi():
         data_waktu()
         data_petugas()
         jumlah_undangan()
-        admin_bertugas()
-        pemesan()
-        catatan_pengantin()
     elif pilih_konfirm == "4":
         data_waktu()
         data_petugas()
         jumlah_undangan()
-        admin_bertugas()
-        pemesan()
-        catatan_pengantin()
     elif pilih_konfirm == "5":
         data_petugas()
         jumlah_undangan()
-        admin_bertugas()
-        pemesan()
-        catatan_pengantin()
     elif pilih_konfirm == "6":
         jumlah_undangan()
-        admin_bertugas()
-        pemesan()
-        catatan_pengantin()
     elif pilih_konfirm == "7":
         catatan_pengantin()
     elif pilih_konfirm == "8":
@@ -511,10 +519,10 @@ def cek_reservasi():
     os.system("cls")
     nomor = 1
     print("Riwayat Reservasi".center(115))
-    print("Harap lakukan reservasi ulang apabila pembayaran anda ditolak atau hubungi CP 085806500458 (Fadlan)\n".center(115))
+    print("Harap lakukan reservasi ulang atau hubungi CP 085806500458 (Fadlan) apabila pembayaran anda ditolak\n".center(115))
     for reservasi in transaksi.riwayatreservasi():
         if nama_pengguna == reservasi[9]:
-            print(f"{nomor}. Nama Pengantin    : {reservasi[5]}\n   Waktu Reservasi   : {reservasi[1]}\n   Waktu Akad Nikah  : {reservasi[2]}\n   Nama Paket        : Paket {reservasi[6]}\n   Jumlah Undangan   : {reservasi[4]}\n   Catatan           : {reservasi[3]}\n   Status Konfirmasi : {reservasi[8]}\n")
+            print(f"{nomor}. Nama Pengantin    : {reservasi[5]}\n   Waktu Reservasi   : {reservasi[1]}\n   Waktu Akad Nikah  : {reservasi[2]}\n   Nama Paket        : Paket {reservasi[6]}\n   Jumlah Undangan   : {reservasi[4]}\n   Catatan           : {reservasi[3]}\n   Status Konfirmasi : {reservasi[8]}\n   MC                : {petugasnikah.detailpetugas({'id_reservasi' : reservasi[0], 'jenis_petugas': 'MC'})}\n   Tim Hadrah        : {petugasnikah.detailpetugas({'id_reservasi' : reservasi[0], 'jenis_petugas': 'Tim Hadrah'})}\n   Mubaligh          : {petugasnikah.detailpetugas({'id_reservasi' : reservasi[0], 'jenis_petugas': 'Mubaligh'})}\n   Qori'             : {petugasnikah.detailpetugas({'id_reservasi' : reservasi[0], 'jenis_petugas': 'Qori'})}\n")
             nomor += 1
         else:
             continue
