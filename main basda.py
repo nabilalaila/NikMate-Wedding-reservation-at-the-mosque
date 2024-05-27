@@ -297,13 +297,13 @@ def data_paket():
 def data_waktu():
     global waktu_akad
     os.system("cls")
-    print("Pilih waktu yang kamu inginkan".center(115))
+    print("Pilih waktu pernikahan".center(115))
     tahun = int(input("Tahun (isi menggunakan angka)   : "))
     bulan = int(input("Bulan (isi menggunakan angka)   : "))
     hari = int(input("Tanggal (isi menggunakan angka) : "))
     pilih_hari = datetime(tahun, bulan,hari)
     acara = []
-    for data in transaksi.bacareservasi():
+    for data in transaksi.riwayatreservasi():
         if pilih_hari.date() == data[2].date() and data[8] != "Pembayaran ditolak":
             waktu = data[2].strftime("%H:%M:%S")
             acara.append(waktu)
@@ -329,6 +329,7 @@ def data_waktu():
         pilih_kembali = input("|1| Ganti Paket\n|2| Ganti Tanggal\n|3| Batalkan Reservasi\n Pilih => ")
         if pilih_kembali == "1":
             data_paket()
+            data_waktu()
         elif pilih_kembali == "2":
             data_waktu()
         elif pilih_kembali == "3":
@@ -336,7 +337,7 @@ def data_waktu():
         else:
             input("Maaf, inputan tidak sesuai. Klik enter untuk lanjut => ")
             data_waktu()
-
+            
 def data_petugas():
     os.system("cls")
     print("Pilih petugas pernikahan".center(115))
