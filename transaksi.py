@@ -61,12 +61,14 @@ def riwayatreservasi():
     conn = psycopg2.connect(dbname="NikMate",user="postgres", password="Gwbis@99", host="localhost",port="5433")
     cur = conn.cursor()
     sql = """select r.id_reservasi, r.waktu_reservasi, r.waktu_akad_nikah, r.catatan_pengantin, r.jumlah_undangan, r.nama_pengantin_pria ||' dan '|| r.nama_pengantin_wanita,
-p.nama_paket, a.nama_admin, s.status_konfirmasi, pe.username_pengguna
+p.nama_paket, a.nama_admin, s.status_konfirmasi, pe.username_pengguna, ru.nama_ruangan
 from reservasi r
 join paket_reservasi p on p.id_paket = r.id_paket
 join admin a on a.id_admin = r.id_admin
 join pembayaran s on s.id_pembayaran = r.id_pembayaran
-join pengguna pe on pe.id_pengguna = r.id_pengguna"""
+join pengguna pe on pe.id_pengguna = r.id_pengguna 
+join ruangan ru on ru.id_ruangan = p.id_ruangan
+order by r.id_reservasi"""
     cur.execute(sql)
     data = cur.fetchall()
     cur.close()

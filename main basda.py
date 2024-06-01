@@ -178,10 +178,14 @@ def menu_edit_petugas():
 def edit_data_petugas():
     os.system("cls")
     print("Pilih data petugas yang ingin diubah\n".center(115))
-    for petugas in petugasnikah.readpetugas():
-        print(f"{petugas[0]}. Nama Lengkap Petugas  : {petugas[1]}\n   Nomor Telepon Petugas : {petugas[2]}\n   Honorarium Petugas    : {petugas[3]}\n   Jenis Petugas         : {petugas[4]}\n")
-    global data_diedit
+    nomor = 1
+    data = petugasnikah.readpetugas()
+    for petugas in data:
+        print(f"{nomor}. Nama Lengkap Petugas  : {petugas[1]}\n   Nomor Telepon Petugas : {petugas[2]}\n   Honorarium Petugas    : {petugas[3]}\n   Jenis Petugas         : {petugas[4]}\n")
+        nomor+=1
+    global id_edit
     data_diedit = input("Pilih Petugas (Ketik nomornya) : ")
+    id_edit = data[int(data_diedit)-1][0]
     while data_diedit.isdigit() == False:
         os.system("cls")
         input("Maaf, inputan harus berupa angka. Klik enter untuk lanjut =>".center(115))
@@ -191,7 +195,7 @@ def edit_data_petugas():
     input_data_petugas()
     
 def update_petugas():
-    petugas_baru['id'] = int(data_diedit)
+    petugas_baru['id'] = int(id_edit)
     petugasnikah.updatepetugas(petugas_baru)
     os.system("cls")
     input("Edit data petugas pernikahan berhasil\nKlik enter untuk lanjut => ".center(115))
@@ -277,9 +281,9 @@ def data_pengantin():
     nama_pengantin_wanita = input("Nama Pengantin Wanita : ")
 
 def data_paket():
-    global paket_nikah, nama_paket
+    global paket_nikah, nama_paket, ruangan
     os.system("cls")
-    print("Pilih paket yang kamu inginkan".center(115))
+    print("Pilih paket".center(115))
     for paket in paketnikah.readpaket():
         print(f"{paket[0]}. Paket {paket[3]}\n   Ruangan   : {paket[1]}\n   Fasilitas : {paket[4]}\n   Harga     : {paket[2]}\n")
     pilih_paket = input("Pilih => ")
@@ -291,6 +295,7 @@ def data_paket():
         paket_nikah = int(pilih_paket)
         if paket[0] == paket_nikah:
             nama_paket = paket[3]
+            ruangan = paket[1]
             break
     print(nama_paket)
 
@@ -306,26 +311,29 @@ def data_waktu():
     for data in transaksi.riwayatreservasi():
         if pilih_hari.date() == data[2].date() and data[8] != "Pembayaran ditolak":
             waktu = data[2].strftime("%H:%M:%S")
-            acara.append(waktu)
+            acara.append([waktu, data[10]])
     jam_akad = ['08:00:00', '10:00:00', '13:00:00']
-    nomor = 1
-    pilihan_jam = []
+    ruang_akad = ['Kubah Utama', 'Kubah Utara', 'Kubah Selatan']
+    data_akad = [[jam, ruang] for jam in jam_akad for ruang in ruang_akad]
     if len(acara) <= 2:
-        pilihan_jam = [jam for jam in jam_akad if jam not in acara]
+        pilihan_jam = [data for data in data_akad if data not in acara]
         if pilihan_jam:
                 print("Pilihan Jam : ")
-                for nomor, jam in enumerate(pilihan_jam, start=1):
-                    print(f"  {nomor}. {jam}")
+                nomor = 1
+                for data_waktu in pilihan_jam:
+                    if data_waktu[1] == ruangan:
+                        print(f"  {nomor}. {data_waktu[0]}")
+                        nomor += 1
                 pilih_jam = input("Pilih => ")
                 if pilih_jam.isdigit() and 1 <= int(pilih_jam) <= len(pilihan_jam):
-                    jam = pilihan_jam[int(pilih_jam) - 1]
+                    jam = pilihan_jam[int(pilih_jam)][0]
                 else:
-                    input("Maaf, inputan harus berupa angka. Pilih salah satu jam\nKlik enter untuk lanjut =>".center(115))
+                    input("\nMaaf, inputan harus berupa angka. Pilih salah satu jam\nKlik enter untuk lanjut =>".center(115))
                     data_waktu()
                 waktu_nikah = datetime.combine(pilih_hari.date(), datetime.strptime(jam, "%H:%M:%S").time())
                 waktu_akad = waktu_nikah.strftime("%Y-%m-%d %H:%M:%S")
     else:    
-        print("Maaf, jadwal pada hari ini tidak tersedia. Cobalah untuk mengganti hari atau paketnya".center(115))
+        print("\nMaaf, jadwal pada hari ini tidak tersedia. Cobalah untuk mengganti hari atau paketnya".center(115))
         pilih_kembali = input("|1| Ganti Paket\n|2| Ganti Tanggal\n|3| Batalkan Reservasi\n Pilih => ")
         if pilih_kembali == "1":
             data_paket()
@@ -427,7 +435,7 @@ def data_pembayaran():
     print("Reservasi tidak akan tersimpan sebelum melakukan transfer\n".center(115))
     for harga in paketnikah.readpaket():
         if harga[0] == paket_nikah:
-            print(f"Total Pembayaran : {harga[2]}")
+            print(f"Total Pembayaran : {harga[4]}")
             break
     input("Klik enter apabila telah melakukan transfer => ")
     global wkt_tf, pemilik_rek
